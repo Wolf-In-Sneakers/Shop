@@ -1,0 +1,22 @@
+{
+  "name": "khudy/localhost",
+  "description": "Test shop!",
+  "type": "project",
+  "require": {
+    "kint-php/kint": "^3.3",
+    "twig/twig": "^3.3"
+  },
+  "license": "Alternative",
+  "authors": [
+    {
+      "name": "Wanderer",
+      "email": "khudyakov1602@gmail.com"
+    }
+  ],
+  "minimum-stability": "beta",
+  "autoload": {
+    "psr-4": {
+      "Shop\\": "engine/"
+    }
+  }
+}
