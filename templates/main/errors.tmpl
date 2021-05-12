@@ -1,0 +1,7 @@
+{% if errors is not empty %}
+    <section class="wrapper error">
+        {% for error in errors %}
+            <h3 class='flex-center'>{{ error }}</h3>
+        {% endfor %}
+    </section>
+{% endif %}

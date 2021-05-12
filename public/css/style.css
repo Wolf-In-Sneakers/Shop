@@ -328,6 +328,7 @@
 
 .product-img {
     flex-flow: row wrap;
+
 }
 
 .product-img > article {
@@ -335,7 +336,13 @@
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    flex-flow: column nowrap;
+    flex-flow: column wrap;
+}
+
+.product-img > article > img {
+    width: 260px;
+    height: 280px;
+    object-fit: cover;
 }
 
 .product-desc {

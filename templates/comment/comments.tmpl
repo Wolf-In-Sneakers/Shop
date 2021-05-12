@@ -1,0 +1,32 @@
+{% block content %}
+    {% if (comments.error is empty) and (goods is not empty) and (goods.error is empty) %}
+        <section class="comments wrapper">
+            <form action="?id_product={{ goods.id_product }}" method="POST">
+                {% if user is empty %}
+                    <input type="text" name="author" class="input" placeholder="ИМЯ" required>
+                {% endif %}
+                <textarea name="comment" cols="30" rows="10" class="textarea" placeholder="Ваш комментарий"
+                          required></textarea>
+                <input type="submit" name="add_comment" class="btn" value="Добавить">
+            </form>
+            {% for comment in comments %}
+                <article class="comment">
+                    <p class="comment_text">
+                        <span class="comment_author">{{ comment.author }}</span>: {{ comment.text }}
+                    </p>
+                    {% if user.id_access == 1 %}
+                        <form action="?id_product={{ goods.id_product }}" method="POST">
+                            <button type="submit" name="delete_comment" class="delete-btn"
+                                    value={{ comment.id_comment }}> Удалить коммент
+                            </button>
+                        </form>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        </section>
+    {% else %}
+        <section class="wrapper error">
+            <h3 class='flex-center'>{{ comments.error }}</h3>
+        </section>
+    {% endif %}
+{% endblock %}

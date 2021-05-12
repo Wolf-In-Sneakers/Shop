@@ -2,6 +2,7 @@
 
 namespace Shop\Basket;
 
+use Exception;
 use mysqli;
 
 class Basket
@@ -17,20 +18,17 @@ class Basket
 
     public function add_in_basket(int $id_product, int $quantity = 1): array
     {
-        $message = [];
         $message["success"] = [];
 
         if ((empty($id_product)) || (empty($quantity))) {
-            $message["error"] = "Один или более передаваемых аргументов пусты!";
-            return $message;
+            throw new Exception("Один или более передаваемых аргументов пусты!");
         }
 
         $id_product = (int)htmlspecialchars((int)strip_tags((int)$id_product));
         $quantity = (int)htmlspecialchars((int)strip_tags((int)$quantity));
 
         if ($quantity < 1) {
-            $message["error"] = "Количество товаров не может быть меньше 1!";
-            return $message;
+            throw new Exception("Количество товаров не может быть меньше 1!");
         }
 
         if (!empty($_SESSION["basket"]))
@@ -39,8 +37,7 @@ class Basket
                     if ($this->id_user) {
                         $sql_query = "UPDATE basket SET quantity=quantity+$quantity WHERE id_user=$this->id_user AND id_product=$id_product;";
                         if (!$this->mysqli->query($sql_query)) {
-                            $message["error"] = "Неудалось выполнить запрос на добавление товара в корзину!";
-                            return $message;
+                            throw new Exception("Неудалось выполнить запрос на добавление товара в корзину!");
                         }
                     }
                     $_SESSION["basket"][$key]["quantity"] += $quantity;
@@ -54,16 +51,14 @@ class Basket
                         LEFT JOIN images i ON p.id_img_main = i.id_image
                         WHERE p.id_product=$id_product;";
         if (!($answer = $this->mysqli->query($sql_query))) {
-            $message["error"] = "Неудалось выполнить запрос на выбоку товара из базы данных!";
-            return $message;
+            throw new Exception("Неудалось выполнить запрос на выбоку товара из базы данных!");
         }
 
         if ($row = $answer->fetch_assoc()) {
             if ($this->id_user) {
                 $sql_query = "INSERT INTO basket(id_user, id_product, quantity) VALUES ($this->id_user, $id_product, $quantity);";
                 if (!$this->mysqli->query($sql_query)) {
-                    $message["error"] = "Неудалось выполнить запрос на добавление товара в корзину!";
-                    return $message;
+                    throw new Exception("Неудалось выполнить запрос на добавление товара в корзину!");
                 }
             }
 
@@ -71,7 +66,7 @@ class Basket
             $_SESSION["basket"][] = $row;
             $message["success"][] = "Товар добавлен в корзину!";
         } else {
-            $message["error"] = "Неудалось найти товар!";
+            throw new Exception("Неудалось найти товар!");
         }
 
         return $message;
@@ -79,20 +74,17 @@ class Basket
 
     public function change_quantity(int $id_product, int $quantity): array
     {
-        $message = [];
         $message["success"] = [];
 
         if ((empty($id_product)) || (empty($quantity))) {
-            $message["error"] = "Один или более передаваемых аргументов пусты!";
-            return $message;
+            throw new Exception("Один или более передаваемых аргументов пусты!");
         }
 
         $id_product = (int)htmlspecialchars((int)strip_tags((int)$id_product));
         $quantity = (int)htmlspecialchars((int)strip_tags((int)$quantity));
 
         if ($quantity < 1) {
-            $message["error"] = "Количество товаров не может быть меньше 1!";
-            return $message;
+            throw new Exception("Количество товаров не может быть меньше 1!");
         }
 
         if (!empty($_SESSION["basket"]))
@@ -101,8 +93,7 @@ class Basket
                     if ($this->id_user) {
                         $sql_query = "UPDATE basket SET quantity=$quantity WHERE id_user=$this->id_user AND id_product=$id_product;";
                         if (!$this->mysqli->query($sql_query)) {
-                            $message["error"] = "Неудалось выполнить запрос на изменение количества товара в корзине!";
-                            return $message;
+                            throw new Exception("Неудалось выполнить запрос на изменение количества товара в корзине!");
                         }
                     }
 
@@ -113,22 +104,18 @@ class Basket
                 }
             }
         else {
-            $message["error"] = "Корзина пуста!";
-            return $message;
+            throw new Exception("Корзина пуста!");
         }
 
-        $message["error"] = "Неудалось найти товар в корзине!";
-        return $message;
+        throw new Exception("Неудалось найти товар в корзине!");
     }
 
     public function delete_in_basket(int $id_product): array
     {
-        $message = [];
         $message["success"] = [];
 
         if (empty($id_product)) {
-            $message["error"] = "Передаваемый аргумент пуст!";
-            return $message;
+            throw new Exception("Передаваемый аргумент пуст!");
         }
 
         $id_product = (int)htmlspecialchars((int)strip_tags((int)$id_product));
@@ -139,8 +126,7 @@ class Basket
                     if ($this->id_user) {
                         $sql_query = "DELETE FROM basket WHERE id_user=$this->id_user AND id_product=$id_product;";
                         if (!$this->mysqli->query($sql_query)) {
-                            $message["error"] = "Неудалось удалить товар из корзины!";
-                            return $message;
+                            throw new Exception("Неудалось удалить товар из корзины!");
                         }
                     }
 
@@ -151,12 +137,10 @@ class Basket
                 }
             }
         else {
-            $message["error"] = "Корзина пуста!";
-            return $message;
+            throw new Exception("Корзина пуста!");
         }
 
-        $message["error"] = "Неудалось найти товар в корзине!";
-        return $message;
+        throw new Exception("Неудалось найти товар в корзине!");
     }
 
     public function clear_basket(): array
@@ -167,8 +151,7 @@ class Basket
         if ($this->id_user) {
             $sql_query = "DELETE FROM basket WHERE id_user=$this->id_user;";
             if (!$this->mysqli->query($sql_query)) {
-                $message["error"] = "Неудалось очистить корзину!";
-                return $message;
+                throw new Exception("Неудалось очистить корзину!");
             }
         }
 
@@ -182,9 +165,9 @@ class Basket
     {
         $total = 0;
 
-        foreach ($_SESSION["basket"] as $goods) {
-            $total += $goods["price"] * $goods["quantity"];
-        }
+        if (!empty($_SESSION["basket"]))
+            foreach ($_SESSION["basket"] as $goods)
+                $total += $goods["price"] * $goods["quantity"];
 
         return $total;
     }

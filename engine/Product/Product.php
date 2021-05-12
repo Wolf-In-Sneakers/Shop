@@ -2,12 +2,14 @@
 
 namespace Shop\Product;
 
+use Exception;
 use mysqli;
 
 class Product
 {
     private mysqli $mysqli;
     private ProductImg $product_img;
+    private array $table_names = ["types_products", "genders", "brands"];
 
     public function __construct(mysqli $mysqli)
     {
@@ -17,17 +19,14 @@ class Product
 
     public function add_goods(string $name, int $id_type, int $id_brand, int $price, int $id_gender = 0, array $imgs = []): array
     {
-        $message = [];
         $message["success"] = [];
 
         if ((empty($name)) || (empty($id_type)) || (empty($id_brand)) || (empty($price))) {
-            $message["error"] = "Один или более передаваемых аргументов пусты!";
-            return $message;
+            throw new Exception("Один или более передаваемых аргументов пусты!");
         }
 
         if ($price < 1) {
-            $message["error"] = "Цена не может быть меньше 1 рубля!";
-            return $message;
+            throw new Exception("Цена не может быть меньше 1 рубля!");
         }
 
         $name = $this->mysqli->real_escape_string((string)htmlspecialchars((string)strip_tags(trim((string)$name))));
@@ -36,15 +35,10 @@ class Product
         $price = (int)htmlspecialchars((int)strip_tags((int)$price));
         $id_gender = (!empty($id_gender)) ? (int)htmlspecialchars((int)strip_tags((int)$id_gender)) : null;
 
-
         foreach ($imgs["size"] as $key => $img_size) {
             if ((!empty($img_size)) && (is_uploaded_file($imgs['tmp_name'][$key]))) {
                 $answer = $this->product_img->upload_img($imgs['name'][$key], $imgs['tmp_name'][$key], $imgs['type'][$key], $img_size);
                 array_push($message["success"], ...$answer["success"]);
-                if (!empty($answer['error'])) {
-                    $message['error'] = $answer['error'];
-                    return $message;
-                }
                 $id_images[] = $answer['id_image'];
             }
         }
@@ -52,8 +46,7 @@ class Product
         $sql_query = "INSERT INTO products(name, id_type," . ((!empty($id_gender)) ? " id_gender, " : " ") . "id_brand," . ((!empty($id_images)) ? " id_img_main, " : " ") . "price) 
                         VALUES ('$name', $id_type," . ((!empty($id_gender)) ? " $id_gender, " : " ") . "$id_brand," . ((!empty($id_images)) ? " $id_images[0], " : " ") . "$price);";
         if (!$this->mysqli->query($sql_query)) {
-            $message["error"] = "В запрос на добавление товара произошла ошибка!";
-            return $message;
+            throw new Exception("В запрос на добавление товара произошла ошибка!");
         }
 
         if ($id_product = $this->mysqli->insert_id) {
@@ -62,22 +55,17 @@ class Product
                 foreach ($id_images as $id_image) {
                     $answer = $this->product_img->create_bond_product_img($id_product, $id_image);
                     array_push($message["success"], ...$answer["success"]);
-                    if (!empty($answer['error'])) {
-                        $message['error'] = $answer['error'];
-                        return $message;
-                    }
                 }
             }
             $message["success"][] = "Товар успешно добавлен!";
         } else
-            $message["error"] = "Неудалось добавить товар!";
+            throw new Exception("Неудалось добавить товар!");
 
         return $message;
     }
 
     public function read_goods_all(): array
     {
-        $message = [];
         $message["success"] = [];
         $message["goods"] = [];
 
@@ -85,7 +73,7 @@ class Product
                         LEFT JOIN images ON products.id_img_main = images.id_image
                         ORDER BY products.viewed DESC, products.liked DESC;";
         if (!($answer = $this->mysqli->query($sql_query))) {
-            $message["error"] = "Неудалось выполнить запрос на выбоку товаров из базы данных!";
+            $message["goods"]["error"] = "Неудалось выполнить запрос на выбоку товаров из базы данных!";
             return $message;
         }
 
@@ -95,18 +83,17 @@ class Product
         if (!empty($message["goods"]))
             $message["success"][] = "Товары успешно полученны из базы данных!";
         else
-            $message["error"] = "Неудалось получить товары из базы данных!";
+            $message["goods"]["error"] = "Неудалось получить товары из базы данных!";
 
         return $message;
     }
 
     public function read_goods_one(int $id_product): array
     {
-        $message = [];
         $message["success"] = [];
 
         if (empty($id_product)) {
-            $message["error"] = "Передаваемый аргумент пуст!";
+            $message["goods"]["error"] = "Передаваемый аргумент пуст!";
             return $message;
         }
 
@@ -118,7 +105,7 @@ class Product
                         LEFT JOIN genders ON products.id_gender = genders.id_gender
                         WHERE products.id_product=$id_product;";
         if (!($answer = $this->mysqli->query($sql_query))) {
-            $message["error"] = "Неудалось выполнить запрос на выбоку товара из базы данных!";
+            $message["goods"]["error"] = "Неудалось выполнить запрос на выбоку товара из базы данных!";
             return $message;
         }
 
@@ -126,22 +113,19 @@ class Product
             $message["goods"] = $row;
             $message["success"][] = "Товар успешно получен из таблицы!";
         } else {
-            $message["error"] = "Неудалось найти товар в базе данных!";
+            $message["goods"]["error"] = "Неудалось найти товар в базе данных!";
             return $message;
         }
 
-        $answer = $this->product_img->read_img_all($id_product);
-        array_push($message["success"], ...$answer["success"]);
-        $message["img"] = $answer['img'];
-        if (!empty($answer['error'])) {
-            $message['error'] = $answer['error'];
-            return $message;
-        }
+        try {
+            $answer = $this->product_img->read_img_all($id_product);
+            array_push($message["success"], ...$answer["success"]);
+            $message["goods"]["img"] = $answer['img'];
 
-        $answer = $this->update_view($id_product);
-        array_push($message["success"], ...$answer["success"]);
-        if (!empty($answer['error'])) {
-            $message['error'] = $answer['error'];
+            $answer = $this->update_view($id_product);
+            array_push($message["success"], ...$answer["success"]);
+        } catch (Exception $e) {
+            $message["goods"]["error"] = $e->getMessage();
         }
 
         return $message;
@@ -149,12 +133,10 @@ class Product
 
     public function update_view(int $id_product): array
     {
-        $message = [];
         $message["success"] = [];
 
         if (empty($id_product)) {
-            $message["error"] = "Передаваемый аргумент пуст!";
-            return $message;
+            throw new Exception("Передаваемый аргумент пуст!");
         }
 
         $id_product = (int)htmlspecialchars((int)strip_tags((int)$id_product));
@@ -163,33 +145,30 @@ class Product
         if ($this->mysqli->query($sql_query))
             $message["success"][] = "Количество просмотров товара увеличелось!";
         else
-            $message["error"] = "Неудалось увеличить количество просмотров товара!";
+            throw new Exception("Неудалось увеличить количество просмотров товара!");
 
         return $message;
     }
 
     public function update_goods(int $id_product, string $name = "", int $id_type = 0, int $id_gender = 0, int $id_brand = 0, int $price = 0, array $imgs = []): array
     {
-        $message = [];
         $message["success"] = [];
 
         if (empty($id_product)) {
-            $message["error"] = "Передаваемый аргумент пуст!";
-            return $message;
+            throw new Exception("Передаваемый аргумент пуст!");
         }
 
         $id_product = (int)htmlspecialchars((int)strip_tags((int)$id_product));
 
         $sql_query = "SELECT id_product, name, id_type, id_gender, id_brand, price FROM products WHERE id_product=$id_product LIMIT 1;";
         if (!($answer = $this->mysqli->query($sql_query))) {
-            $message["error"] = "Неудалось выполнить запрос на выбоку товара из базы данных!";
-            return $message;
+            throw new Exception("Неудалось выполнить запрос на выбоку товара из базы данных!");
         }
+
         if ($row = $answer->fetch_assoc()) {
             $product = $row;
         } else {
-            $message["error"] = "Неудалось найти товар в базе данных!";
-            return $message;
+            throw new Exception("Неудалось найти товар в базе данных!");
         }
 
         $name = ((!empty($name)) and ((string)$name !== (string)$product['name'])) ? $this->mysqli->real_escape_string((string)htmlspecialchars((string)strip_tags((string)$name))) : null;
@@ -201,8 +180,7 @@ class Product
             $id_gender = "null";
 
         if ((!empty($price)) && ($price < 1)) {
-            $message["error"] = "Цена не может быть меньше 1 рубля!";
-            return $message;
+            throw new Exception("Цена не может быть меньше 1 рубля!");
         }
 
         $sql_query = "UPDATE products SET ";
@@ -230,8 +208,7 @@ class Product
         if ($change_exists) {
             $sql_query .= " WHERE id_product=$id_product;";
             if (!$this->mysqli->query($sql_query)) {
-                $message["error"] = "В запрос на изменение товара произошла ошибка!";
-                return $message;
+                throw new Exception("В запрос на изменение товара произошла ошибка!");
             }
         }
 
@@ -239,10 +216,6 @@ class Product
             if ((!empty($img_size)) && (is_uploaded_file($imgs['tmp_name'][$key]))) {
                 $answer = $this->product_img->upload_img($imgs['name'][$key], $imgs['tmp_name'][$key], $imgs['type'][$key], $img_size);
                 array_push($message["success"], ...$answer["success"]);
-                if (!empty($answer['error'])) {
-                    $message['error'] = $answer['error'];
-                    return $message;
-                }
                 $id_image = $answer['id_image'];
 
                 if (empty($first_image))
@@ -250,28 +223,18 @@ class Product
 
                 $answer = $this->product_img->create_bond_product_img($id_product, $id_image);
                 array_push($message["success"], ...$answer["success"]);
-                if (!empty($answer['error'])) {
-                    $message['error'] = $answer['error'];
-                    return $message;
-                }
-
             }
         }
 
         if (!empty($first_image)) {
             $sql_query = "SELECT id_img_main FROM products WHERE id_product=$id_product LIMIT 1;";
             if (!($answer = $this->mysqli->query($sql_query))) {
-                $message["error"] = "Неудалось выполнить запрос на выбоку товара из базы данных!";
-                return $message;
+                throw new Exception("Неудалось выполнить запрос на выбоку товара из базы данных!");
             }
             if ($row = $answer->fetch_assoc())
                 if (empty($row['id_img_main'])) {
                     $answer = $this->product_img->set_main_img($id_product, $first_image);
                     array_push($message["success"], ...$answer["success"]);
-                    if (!empty($answer['error'])) {
-                        $message['error'] = $answer['error'];
-                        return $message;
-                    }
                 }
         }
 
@@ -279,52 +242,63 @@ class Product
         return $message;
     }
 
+    public function goods_character(): array
+    {
+        $message["success"] = [];
+        $message["characters"] = [];
+
+        foreach ($this->table_names as $table_name) {
+            $sql_query = "SELECT * FROM $table_name;";
+            if (!($answer = $this->mysqli->query($sql_query))) {
+                throw new Exception("Неудалось выполнить запрос на выбоку таблиц из базы данных!");
+            }
+
+            while ($row = $answer->fetch_assoc()) {
+                $message["characters"][$table_name][] = $row;
+            }
+        }
+
+        $message["success"][] = "Таблицы успешно получены!";
+        return $message;
+    }
+
     public function like(int $id_product): array
     {
-        $message = [];
         $message["success"] = [];
 
         if (empty($id_product)) {
-            $message["error"] = "Передаваемый аргумент пуст!";
-            return $message;
+            throw new Exception("Передаваемый аргумент пуст!");
         }
 
         $id_product = (int)htmlspecialchars((int)strip_tags((int)$id_product));
 
-        $sql_query = "UPDATE products SET liked=liked + 1 WHERE id_product=(SELECT id_product FROM products WHERE id_product=$id_product LIMIT 1);";
-        if ($this->mysqli->query($sql_query))
-            $message["success"] = "Like поставлен!";
-        else
-            $message["error"] = "Неудалось найти товар!";
+        $sql_query = "UPDATE products SET liked=liked + 1 WHERE id_product=$id_product;";
+        if (!$this->mysqli->query($sql_query))
+            throw new Exception("Неудалось поставить like!");
+
+        $message["success"] = "Like поставлен!";
 
         return $message;
     }
 
     public function delete_goods(int $id_product): array
     {
-        $message = [];
         $message["success"] = [];
 
         if (empty($id_product)) {
-            $message["error"] = "Передаваемый аргумент пуст!";
-            return $message;
+            throw new Exception("Передаваемый аргумент пуст!");
         }
 
         $id_product = (int)htmlspecialchars((int)strip_tags((int)$id_product));
 
         $sql_query = "SELECT id_image FROM images_products WHERE id_product=$id_product;";
         if (!($answer = $this->mysqli->query($sql_query))) {
-            $message["error"] = "Неудалось выполнить запрос на выбоку изображений из базы данных!";
-            return $message;
+            throw new Exception("Неудалось выполнить запрос на выбоку изображений из базы данных!");
         }
 
         while ($row = $answer->fetch_assoc()) {
             $delete_img = $this->product_img->delete_img($id_product, $row["id_image"]);
             array_push($message["success"], ...$delete_img["success"]);
-            if (!empty($delete_img["error"])) {
-                $message['error'] = $delete_img["error"];
-                return $message;
-            }
         }
 
         $sql_query = "DELETE FROM products WHERE id_product=$id_product;";
@@ -336,7 +310,7 @@ class Product
 
             $message["success"][] = "Товар удален!";
         } else
-            $message["error"] = "Неудалось удалить товар!";
+            throw new Exception("Неудалось удалить товар!");
 
         return $message;
     }

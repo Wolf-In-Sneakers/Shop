@@ -1,0 +1,14 @@
+{% include "main/header.tmpl" %}
+{% include "main/errors.tmpl" %}
+
+<form action='login.php' method='POST' class='wrapper flex-center regist'>
+    <a href="index.php" class="btn basket">Главная</a>
+    <input type="text" name='login' class="input" placeholder='Логин' required>
+    <input type="password" name='password' class="input" placeholder='Пароль' required>
+    <div>
+        <input type="submit" name='enter' class="btn" value='Войти'>
+        <a href='registration.php' class='btn'>Регистрация</a>
+    </div>
+</form>
+
+{% include "main/footer.tmpl" %}

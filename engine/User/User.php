@@ -2,7 +2,9 @@
 
 namespace Shop\User;
 
+use Exception;
 use mysqli;
+use Shop\User\UserImg;
 
 class User
 {
@@ -37,16 +39,16 @@ class User
 
     public function read_profile(): array
     {
-        $message = [];
         $message["success"] = [];
 
         $message["user"] = $_SESSION["user"];
 
-        $answer = $this->user_img->read_img_all($this->id_user);
-        array_push($message["success"], ...$answer["success"]);
-        $message["img"] = $answer['img'];
-        if (!empty($answer['error'])) {
-            $message['error'] = $answer['error'];
+        try {
+            $answer = $this->user_img->read_img_all($this->id_user);
+            array_push($message["success"], ...$answer["success"]);
+            $message["img"] = $answer['img'];
+        } catch (Exception $e) {
+            $message["user"]['error'] = $e->getMessage();
         }
 
         return $message;
@@ -54,7 +56,6 @@ class User
 
     public function update_profile(string $name = "", string $login = "", array $imgs = []): array
     {
-        $message = [];
         $message["success"] = [];
 
         $name = ((!empty($name)) and ((string)$name !== (string)$_SESSION["user"]['name'])) ? $this->mysqli->real_escape_string((string)htmlspecialchars((string)strip_tags((string)$name))) : null;
@@ -73,8 +74,7 @@ class User
         if ($change_exists) {
             $sql_query .= " WHERE id_user=$this->id_user;";
             if (!$this->mysqli->query($sql_query)) {
-                $message["error"] = "В запрос на изменение профиля произошла ошибка!";
-                return $message;
+                throw new Exception("В запрос на изменение профиля произошла ошибка!");
             }
             if (isset($name))
                 $_SESSION["user"]['name'] = $name;
@@ -86,10 +86,6 @@ class User
             if ((!empty($img_size)) && (is_uploaded_file($imgs['tmp_name'][$key]))) {
                 $answer = $this->user_img->upload_img($imgs['name'][$key], $imgs['tmp_name'][$key], $imgs['type'][$key], $img_size);
                 array_push($message["success"], ...$answer["success"]);
-                if (!empty($answer['error'])) {
-                    $message['error'] = $answer['error'];
-                    return $message;
-                }
                 $id_image = $answer['id_image'];
 
                 if (empty($first_image))
@@ -97,28 +93,18 @@ class User
 
                 $answer = $this->user_img->create_bond_user_img($this->id_user, $id_image);
                 array_push($message["success"], ...$answer["success"]);
-                if (!empty($answer['error'])) {
-                    $message['error'] = $answer['error'];
-                    return $message;
-                }
-
             }
         }
 
         if (!empty($first_image)) {
             $sql_query = "SELECT id_img_main FROM users WHERE id_user=$this->id_user LIMIT 1;";
             if (!($answer = $this->mysqli->query($sql_query))) {
-                $message["error"] = "Неудалось выполнить запрос на выбоку пользователя из базы данных!";
-                return $message;
+                throw new Exception("Неудалось выполнить запрос на выбоку пользователя из базы данных!");
             }
             if ($row = $answer->fetch_assoc())
                 if (empty($row['id_img_main'])) {
                     $answer = $this->user_img->set_main_img($this->id_user, $first_image);
                     array_push($message["success"], ...$answer["success"]);
-                    if (!empty($answer['error'])) {
-                        $message['error'] = $answer['error'];
-                        return $message;
-                    }
                 }
         }
 
@@ -131,31 +117,26 @@ class User
         $message = [];
 
         if ((empty($last_passwd)) || (empty($passwd)) || (empty($check_passwd))) {
-            $message["error"] = "Не все поля заполнены!";
-            return $message;
+            throw new Exception("Не все поля заполнены!");
         }
 
         if (strlen($passwd) < 9) {
-            $message["error"] = "Пароль меньше 9 символов!";
-            return $message;
+            throw new Exception("Пароль меньше 9 символов!");
         }
 
         if ((string)$passwd !== (string)$check_passwd) {
-            $message["error"] = "Пароли не совпадают!";
-            return $message;
+            throw new Exception("Пароли не совпадают!");
         }
 
         if ((string)$last_passwd === (string)$passwd) {
-            $message["error"] = "Пароль не должен совпадать со старым паролем!";
-            return $message;
+            throw new Exception("Пароль не должен совпадать со старым паролем!");
         }
 
         $passwd = password_hash($passwd, PASSWORD_DEFAULT);
 
         $sql_query = "SELECT password FROM passwords WHERE id_user=$this->id_user LIMIT 1;";
         if (!($answer = $this->mysqli->query($sql_query))) {
-            $message["error"] = "Неудалось выполнить запрос на выбоку пользователя из базы данных!";
-            return $message;
+            throw new Exception("Неудалось выполнить запрос на выбоку пользователя из базы данных!");
         }
         if ($row = $answer->fetch_assoc()) {
             if (password_verify($last_passwd, $row["password"])) {
@@ -163,22 +144,18 @@ class User
                 if ($this->mysqli->query($sql_query))
                     $message["success"] = "Пароль успешно изменен!";
                 else {
-                    $message["error"] = "Неудалось изменить пароль!";
-                    return $message;
+                    throw new Exception("Неудалось изменить пароль!");
                 }
             } else {
-                $message["error"] = "Неверно введен пароль!";
-                return $message;
+                throw new Exception("Неверно введен пароль!");
             }
         } else {
-            $message["error"] = "Неудалось найти пользователя в базе данных!";
-            return $message;
+            throw new Exception("Неудалось найти пользователя в базе данных!");
         }
 
         $sql_query = "SELECT modified FROM passwords WHERE id_user=$this->id_user LIMIT 1;";
         if (!($answer = $this->mysqli->query($sql_query))) {
-            $message["error"] = "Неудалось выполнить запрос на выбоку пользователя из базы данных!";
-            return $message;
+            throw new Exception("Неудалось выполнить запрос на выбоку пользователя из базы данных!");
         }
         if ($row = $answer->fetch_assoc()) {
             $this->modified_passwd = $row['modified'];
@@ -192,14 +169,12 @@ class User
         $message = [];
 
         if (empty($passwd)) {
-            $message["error"] = "Не введен пароль!";
-            return $message;
+            throw new Exception("Не введен пароль!");
         }
 
         $sql_query = "SELECT password FROM passwords WHERE id_user=$this->id_user LIMIT 1;";
         if (!($answer = $this->mysqli->query($sql_query))) {
-            $message["error"] = "Неудалось выполнить запрос на выбоку пользователя из базы данных!";
-            return $message;
+            throw new Exception("Неудалось выполнить запрос на выбоку пользователя из базы данных!");
         }
         if ($row = $answer->fetch_assoc()) {
             if (password_verify($passwd, $row["password"])) {
@@ -208,11 +183,11 @@ class User
                     $message["success"] = "Аккаунт успешно удален!";
                     session_destroy();
                 } else
-                    $message["error"] = "Неудалось удалить аккаунт!";
+                    throw new Exception("Неудалось удалить аккаунт!");
             } else
-                $message["error"] = "Неверно введен пароль!";
+                throw new Exception("Неверно введен пароль!");
         } else
-            $message["error"] = "Неудалось найти пользователя в базе данных!";
+            throw new Exception("Неудалось найти пользователя в базе данных!");
 
         return $message;
     }

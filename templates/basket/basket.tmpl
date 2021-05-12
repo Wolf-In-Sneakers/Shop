@@ -1,0 +1,33 @@
+{% extends "base.tmpl" %}
+
+{% block content %}
+    <h2 class="basket-header wrapper">Корзина</h2>
+    <section class="wrapper basket-items">
+        {% if basket is not empty %}
+            {% for goods in basket %}
+                <article class="basket-item" data-id_product={{ goods.id_product }}>
+                    <a href="product.php?id_product={{ goods.id_product }}" class="wrapper-img">
+                        <img src="{{ goods.image_name is not empty ? UPLOAD_DIR_SMALL~goods.image_name : "images/not_image.png" }}"
+                             alt="item">
+                    </a>
+                    <a href="product.php?id_product={{ goods.id_product }}" class="item-name">{{ goods.name|raw }}</a>
+                    <input type="number" class="basket-quantity input" value="{{ goods.quantity }}" min=0>
+                    <div>
+                        <span class="item-price"
+                              data-price="{{ goods.price }}">{{ goods.price }}руб * {{ goods.quantity }} = {{ goods.price * goods.quantity }}руб</span>
+                    </div>
+                    <button class="delete-btn delete_in_basket">Удалить</button>
+                </article>
+            {% endfor %}
+            <p class="total-price flex-center"> Итого: {{ basket_total }}руб </p>
+            <div class="flex-center">
+                <a href="order.php" class="order_btn btn">Оформить заказ</a>
+            </div>
+            <br>
+            <div class="flex-center">
+                <button class="clear_basket delete-btn">Очистить корзину
+                </button>
+            </div>
+        {% endif %}
+    </section>
+{% endblock %}

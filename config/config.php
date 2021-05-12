@@ -7,7 +7,7 @@ define('PASS', 'root');
 define('DB', 'shop_db');
 
 
-define('ROOT', $_SERVER["DOCUMENT_ROOT"]);
+const ROOT = __DIR__ . "/../";
 
 
 //  Upload IMG config

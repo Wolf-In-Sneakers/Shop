@@ -1,0 +1,51 @@
+{% block add_goods %}
+    {% if (user.id_access == 1) and (goods is not empty) and (goods.error is empty) %}
+        <section class="change_product wrapper">
+            <div>
+                <form action="?id_product={{ goods.id_product }}" method="POST" enctype="multipart/form-data">
+                    <input type="text" name="name" class="input" placeholder="ИМЯ ПРОДУКТА" value="{{ goods.name }}">
+
+                    <select name="id_type" class="select">
+                        <option value="">{{ goods.type| raw }}</option>
+                        {% for character in goods_characters.types_products %}
+                            <option value="{{ character.id_type_product }}">{{ character.name| raw }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <select name="id_gender" class="select">
+                        {% if goods.gender is not empty %}
+                            <option value=''>{{ goods.gender| raw }}</option>";
+                        {% endif %}
+                        <option value=-1>Пол</option>
+                        {% for character in goods_characters.genders %}
+                            <option value="{{ character.id_gender }}">{{ character.name| raw }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <select name="id_brand" class="select">
+                        <option value="">{{ goods.brand| raw }}</option>
+                        {% for character in goods_characters.brands %}
+                            <option value="{{ character.id_brand }}">{{ character.name| raw }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <div class="input_file_wrapper">
+                        <input type="hidden" name="MAX_FILE_SIZE" value="2000000">
+                        <input name="img[]" type="file" id="input_file" class="field input_file" multiple>
+
+                        <label class="input_file_label_wrapper" for="input_file">
+                            <div class="input_file_empty">Файл не вбран</div>
+                            <div class="input_file_dtn">Выбрать</div>
+                        </label>
+                    </div>
+
+                    <input type="number" name="price" class="input" value="{{ goods.price }}" min=1>
+                    <input type="submit" name="update_goods" class="btn" value="Изменить товар">
+                </form>
+                <form action="?id_product={{ goods.id_product }}" method="POST">
+                    <button type="submit" name="delete_goods" class="btn" value="delete">Удалить товар</button>
+                </form>
+            </div>
+        </section>
+    {% endif %}
+{% endblock %}

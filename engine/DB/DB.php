@@ -2,6 +2,7 @@
 
 namespace Shop\DB;
 
+use Error;
 use mysqli;
 use Shop\Singleton\Singleton;
 
@@ -15,7 +16,7 @@ final class DB
     {
         $this->mysqli = new mysqli(HOST, USER, PASS, DB);
         if ($this->mysqli->connect_errno) {
-            throw new \Error("Не удалось подключиться к MySQL: " . $this->mysqli->connect_error);
+            throw new Error("Не удалось подключиться к MySQL: " . $this->mysqli->connect_error);
         }
     }
 

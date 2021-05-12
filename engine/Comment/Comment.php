@@ -2,6 +2,7 @@
 
 namespace Shop\Comment;
 
+use Exception;
 use mysqli;
 
 class Comment
@@ -15,12 +16,10 @@ class Comment
 
     public function add_comment(int $id_product, string $author, string $comment): array
     {
-        $message = [];
         $message["success"] = [];
 
         if ((empty($id_product)) || (empty($author)) || (empty($comment))) {
-            $message["error"] = "Один или более передаваемых аргументов пусты!";
-            return $message;
+            throw new Exception("Один или более передаваемых аргументов пусты!");
         }
 
         $id_product = (int)htmlspecialchars((int)strip_tags((int)$id_product));
@@ -31,19 +30,18 @@ class Comment
         if ($this->mysqli->query($sql_query))
             $message["success"][] = "Добавлен новый комментарий!";
         else
-            $message["error"] = "Неудалось добавить новый комментарий!";
+            throw new Exception("Неудалось добавить новый комментарий!");
 
         return $message;
     }
 
     public function read_comments(int $id_product): array
     {
-        $message = [];
         $message["success"] = [];
         $message["comments"] = [];
 
         if (empty($id_product)) {
-            $message["error"] = "Передаваемый аргумент пуст!";
+            $message["comments"]["error"] = "Передаваемый аргумент пуст!";
             return $message;
         }
 
@@ -51,7 +49,7 @@ class Comment
 
         $sql_query = "SELECT * FROM comments WHERE id_product=$id_product;";
         if (!($answer = $this->mysqli->query($sql_query))) {
-            $message["error"] = "Неудалось выполнить запрос на выбоку комментарииев из базы данных!";
+            $message["comments"]["error"] = "Неудалось выполнить запрос на выбоку комментарииев из базы данных!";
             return $message;
         }
 
@@ -68,18 +66,15 @@ class Comment
 
     public function delete_comment(int $id_product, int $id_comment): array
     {
-        $message = [];
         $message["success"] = [];
 
         if ((empty($id_product)) || (empty($id_comment))) {
-            $message["error"] = "Один или более передаваемых аргументов пусты!";
-            return $message;
+            throw new Exception("Один или более передаваемых аргументов пусты!");
         }
 
         $sql_query = "SELECT * FROM comments WHERE id_product=$id_product AND id_comment=$id_comment LIMIT 1;";
         if (!($answer = $this->mysqli->query($sql_query))) {
-            $message["error"] = "Неудалось выполнить запрос на выбоку комментарииев из базы данных!";
-            return $message;
+            throw new Exception("Неудалось выполнить запрос на выбоку комментарииев из базы данных!");
         }
 
         if (($answer->fetch_assoc())) {
@@ -87,9 +82,9 @@ class Comment
             if ($this->mysqli->query($sql_query))
                 $message["success"][] = "Комментарий успешно удален!";
             else
-                $message["error"] = "Неудалось удалить комментарий!";
+                throw new Exception("Неудалось удалить комментарий!");
         } else
-            $message["error"] = "Неудалось найти комментарий в базе данных!";
+            throw new Exception("Неудалось найти комментарий в базе данных!");
 
         return $message;
     }
