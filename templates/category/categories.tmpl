@@ -1,0 +1,16 @@
+{% extends "base.tmpl" %}
+
+{% block content %}
+    <section class="container categories">
+        {% for category in categories %}
+            <article class="item">
+                <a href="/category/{{ category.id }}">
+                    <div class="wrapper-img">
+                        <img src="/images/{{ category.image_name }}" alt="Изображение товара">
+                    </div>
+                    <p class="item-name">{{ category.name }}</p>
+                </a>
+            </article>
+        {% endfor %}
+    </section>
+{% endblock %}

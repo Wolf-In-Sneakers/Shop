@@ -1,0 +1,50 @@
+{% extends "base.tmpl" %}
+
+{% block content %}
+    {% if products.error is empty %}
+        <section class="container items">
+            {% for goods in products %}
+                <article class="item">
+                    <a href="/product/{{ goods.id_product }}">
+                        <div class="wrapper-img">
+                            <img src="{{ goods.image_name }}" alt="Изображение товара">
+                        </div>
+                        <div class="item-content">
+                            <p class="item-name">{{ goods.name|raw }}</p>
+                            <div class="item-icons">
+                                <span class="item-price">{{ goods.price }}$</span>
+                                <div>
+                                <span class="item-like"> <i class="fa fa-thumbs-o-up"
+                                                            aria-hidden="true"></i>{{ goods.liked }}</span>
+                                    <span class="item-viewed"> <i class="fa fa-eye"
+                                                                  aria-hidden="true"></i>{{ goods.viewed }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    <button class="item-add-basket add_in_basket" data-id_product={{ goods.id_product }}>
+                        <img src="/images/Forma_2.png" alt="basket"> Add to Cart
+                    </button>
+                    {% if user.id_access == 1 %}
+                        <form action="" method="POST">
+                            <input type="hidden" name="id_product" value="{{ goods.id_product }}">
+                            <button type="submit" name="delete_goods" class="item-add-basket delete-item"
+                                    value="Удалить товар">
+                                <i class="fa fa-trash-o" aria-hidden="true"></i> Delete
+                            </button>
+                        </form>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        </section>
+
+        {% include "product/addGoods.tmpl" %}
+
+    {% else %}
+        <section class="wrapper error">
+            <h3 class='flex-center'>{{ products.error }}</h3>
+        </section>
+    {% endif %}
+
+{% endblock %}
+

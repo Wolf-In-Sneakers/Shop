@@ -1,0 +1,26 @@
+{% block updateProfile %}
+    {% if (user is not empty) and (user.error is empty) %}
+        <section class="change_product container">
+            <div>
+                <form action="" method="POST" enctype="multipart/form-data">
+                    <input type="text" name="name" class="input" placeholder="Name">
+                    <input type="text" name="login" class="input" placeholder="Login">
+
+                    <div class="input_file_wrapper">
+                        <input type="hidden" name="MAX_FILE_SIZE" value="2000000">
+                        <input name="img[]" type="file" id="input_file" class="field input_file" multiple>
+
+                        <label class="input_file_label_wrapper" for="input_file">
+                            <div class="input_file_empty">File not selected</div>
+                            <div class="input_file_dtn">Choose</div>
+                        </label>
+                    </div>
+
+                    <input type="submit" name="update_profile" class="btn" value="Save">
+                    <a href="/account/change_passwd" class="btn">Change password</a>
+                    <a href="/account/delete_account" class="btn">Delete account</a>
+                </form>
+            </div>
+        </section>
+    {% endif %}
+{% endblock %}

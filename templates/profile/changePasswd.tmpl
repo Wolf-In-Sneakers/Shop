@@ -1,0 +1,20 @@
+{% extends "base.tmpl" %}
+
+{% block content %}
+    {% if (change_passwd.error is empty) and (change_passwd.success is not empty) %}
+        <section class="error">
+            <h3 class='flex-center'>{{ change_passwd.success }}</h3>
+        </section>
+    {% else %}
+        <section class="change_product container">
+            <div>
+                <form action="" method="POST" enctype="multipart/form-data">
+                    <input type="password" name="last_passwd" class="input" placeholder="Old password" required>
+                    <input type="password" name="passwd" class="input" placeholder="New password" required>
+                    <input type="password" name="passwd_check" class="input" placeholder="Confirm new password" required>
+                    <input type="submit" name="change_passwd" class="btn" value="Change password">
+                </form>
+            </div>
+        </section>
+    {% endif %}
+{% endblock %}

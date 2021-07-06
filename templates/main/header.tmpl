@@ -1,14 +1,121 @@
+{% block header %}
 <!DOCTYPE html>
 <html lang="ru">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SHOP</title>
-    <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
-    <link rel="stylesheet" href="css/reset.css">
-    <link rel="stylesheet" href="css/style.css">
-    <script src="js/script.js"></script>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>BRAND</title>
+    <link rel="shortcut icon" href="/images/Group_2.png" type="image/png">
+    <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/reset.css">
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/htmlElements.css">
+    <link rel="stylesheet" href="/css/header.css">
+    <link rel="stylesheet" href="/css/cart.css">
+    <link rel="stylesheet" href="/css/nav.css">
+    <link rel="stylesheet" href="/css/category.css">
+    <link rel="stylesheet" href="/css/item.css">
+    <link rel="stylesheet" href="/css/comment.css">
+    <link rel="stylesheet" href="/css/featured.css">
+    <link rel="stylesheet" href="/css/subscribe.css">
+    <link rel="stylesheet" href="/css/footer.css">
+    <link rel="stylesheet" href="/css/error.css">
 </head>
 
 <body>
+<header class="header">
+    <section class="container header-content">
+        <a href="/" class="logo">
+            <img src="/images/Group_2.png" alt="logo">BRAN<span>D</span>
+        </a>
+        <section class="search">
+            <a href="#" class="search-browse">Browse<i class="fa fa-caret-down" aria-hidden="true"></i></a>
+            <nav class="search-browse-nav">
+                <div class="browse-triangle"></div>
+                <ul>
+                    <li class="search-browse-nav-categor"><a href="/women">WOMEN</a></li>
+                    <li><a href="/women">Dresses</a></li>
+                    <li><a href="/women">Tops</a></li>
+                    <li><a href="/women">Sweaters/Knits</a></li>
+                    <li><a href="/women">Jackets/Coats</a></li>
+                    <li><a href="/women">Blazers</a></li>
+                    <li><a href="/women">Denim</a></li>
+                    <li><a href="/women">Leggings/Pants</a></li>
+                    <li><a href="/women">Skirts/Shorts</a></li>
+                    <li><a href="/women">Accessories</a></li>
+                    <li><a href="/women">Bags/Purses</a></li>
+                    <li><a href="/women">Swimwear/Underwear</a></li>
+                    <li><a href="/women">Nightwear</a></li>
+                    <li><a href="/women">Shoes</a></li>
+                    <li><a href="/women">Beauty</a></li>
+                    <li class="search-browse-nav-categor"><a href="/men">MEN</a></li>
+                    <li><a href="/men">Tees/Tank tops</a></li>
+                    <li><a href="/men">Shirts/Polos</a></li>
+                    <li><a href="/men">Sweaters</a></li>
+                    <li><a href="/men">Sweatshirts/Hoodies</a></li>
+                    <li><a href="/men">Blazers</a></li>
+                    <li><a href="/men">Jackets/vests</a></li>
+                </ul>
+            </nav>
+            <form action="/search" class="form-search" method="POST">
+                <input name="search" class="search-input" type="text" placeholder="Search for Item..." pattern=".{3,}"
+                       required>
+                <button type="submit" name="search-submit" class="search-submit"><i class="fa fa-search"
+                                                                                    aria-hidden="true"></i></button>
+            </form>
+        </section>
+        <section class="bask-acc">
+            {% block cart %}
+                <a href="/basket" class="basket">
+                    <img src="/images/Forma_1.png" alt="basket"><span class="circle">0</span>
+                </a>
+                <section class="cart">
+                    <div class="cart-triangle"></div>
+                    <div class="cart-content">
+                        <div class="cart-content-items">
+                            {% for goods in basket %}
+                                <article class="cart-item" data-id_product={{ goods.id_product }}>
+                                    <a href="/product/{{ goods.id_product }}" class="wrapper-img">
+                                        <img src="{{ goods.image_name }}" alt="item">
+                                    </a>
+                                    <div>
+                                        <a href="/product/{{ goods.id_product }}"
+                                           class="item-name">{{ goods.name|raw }}</a>
+                                        <h4 class="item-price" data-price="{{ goods.price }}"
+                                            data-quantity="{{ goods.quantity }}">{{ goods.price }}$
+                                            x {{ goods.quantity }}</h4>
+                                    </div>
+                                    <button class="cart-item-btn-close delete_in_basket"><i class="fa fa-times-circle"
+                                                                                            aria-hidden="true"></i>
+                                    </button>
+                                </article>
+                            {% endfor %}
+                        </div>
+
+                        <div class="cart-total">
+                            <span>TOTAL</span><span><span class="cart-total-value"></span>$</span>
+                        </div>
+                        <a href="/order" class="cart-btn">CHECKOUT</a>
+                        <a href="/basket" class="cart-btn">GO TO CART</a>
+                    </div>
+                </section>
+            {% endblock %}
+            {% block account %}
+                <ul class="my-acc">
+                    <li>
+                        {% if user is not empty %}
+                            <a href="/account">My Account</a>
+                            <ul class="my-acc-content">
+                                <li><a href="/account/exit">Exit</a></li>
+                            </ul>
+                        {% else %}
+                            <a href="/account/login">Sign in</a>
+                        {% endif %}
+                    </li>
+                </ul>
+            {% endblock %}
+        </section>
+    </section>
+</header>
+{% endblock %}

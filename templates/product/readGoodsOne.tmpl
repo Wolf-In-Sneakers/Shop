@@ -1,0 +1,65 @@
+{% extends "base.tmpl" %}
+
+{% block content %}
+    {% if (goods is not empty) and (goods.error is empty) %}
+        <h3 class="product-name flex-center container">{{ goods.name|raw }}</h3>
+
+        <section class='container product-img flex-center'>
+            {% if goods.img is empty %}
+                <article>
+                    <img src="{{ IMG_NOT_FOUND }}" alt='Featured item'>
+                </article>
+            {% else %}
+                {% for img in goods.img %}
+                    <article class="item">
+                        <div class="wrapper-img">
+                            <img src="{{ img.name }}" alt="Item">
+                        </div>
+                        {% if user.id_access == 1 %}
+                            <form action="" method="POST">
+                                <button type="submit" class="item-add-basket delete-item" value="{{ img.id_image }}"
+                                        name="delete_img">
+                                    <i class="fa fa-trash-o" aria-hidden="true"></i> Delete
+                                </button>
+                                <button type="submit" class="item-add-basket" value="{{ img.id_image }}"
+                                        name="set_main_img">
+                                    <i class="fa fa-check" aria-hidden="true"></i> <span>Make the main</span>
+                                </button>
+                            </form>
+                        {% endif %}
+                    </article>
+                {% endfor %}
+            {% endif %}
+        </section>
+
+        <section class="container product-desc">
+            <div>
+                <h3>Price: <span>{{ goods.price }}$</span></h3>
+                <h3>Viewed: <span>{{ ++goods.viewed }}</span></h3>
+                <h3>Like: <span class="btn_like_value">{{ goods.liked }}</span>
+                    {% if user is not empty %}
+                        <button class="btn_like delete-btn" data-id_product={{ goods.id_product }}>Like</button>
+                    {% endif %}
+                </h3>
+                <h3>Article: <span>{{ goods.id_product }}</span></h3>
+                <h3>Type: <span>{{ goods.category }}</span></h3>
+                {% if goods.gender is not empty %}
+                    <h3>Gender: <span>{{ goods.gender }}</span></h3>
+                {% endif %}
+                <h3>Brand: <span>{{ goods.brand }}</span></h3>
+                <br>
+                <div>
+                    <button class="btn add_in_basket" data-id_product={{ goods.id_product }}>Add in basket</button>
+                </div>
+            </div>
+        </section>
+
+        {% include "product/updateGoods.tmpl" %}
+        {% include "comment/comments.tmpl" %}
+
+    {% else %}
+        <section class="container error">
+            <h3 class='flex-center'>{{ goods.error }}</h3>
+        </section>
+    {% endif %}
+{% endblock %}

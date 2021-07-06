@@ -1,0 +1,125 @@
+{% extends "base.tmpl" %}
+
+{% block content %}
+    <div class="wrapper">
+        <section class="banner">
+            <div class="container banner-content">
+                <p>THE BRAND<br><span>OF LUXURIOUS </span><span>FASHION</span></p>
+            </div>
+        </section>
+        <section class="container sections">
+            <div class="section-column-one">
+                <article>
+                    <a href="/men" class="section-men">
+                        <img src="/images/Layer_30.png" alt="Men">
+                        <p>HOT DEAL<br><span>FOR MEN</span></p>
+                    </a>
+                </article>
+                <article>
+                    <a href="/accessories" class="section-accos">
+                        <img src="/images/Layer_37.png" alt="Accessories">
+                        <p>LUXURIOUS &amp; TRENDY<br><span>ACCESSORIES</span></p>
+                    </a>
+                </article>
+            </div>
+            <div class="section-column-two">
+                <article>
+                    <a href="/women" class="section-women">
+                        <img src="/images/Layer_32.png" alt="Women">
+                        <p>30% OFFER<br><span>WOMEN</span></p>
+                    </a>
+                </article>
+                <article>
+                    <a href="/kids" class="section-kids">
+                        <img src="/images/Layer_31.png" alt="Kids">
+                        <p>NEW ARRIVALS<br><span>FOR KIDS</span></p>
+                    </a>
+                </article>
+            </div>
+        </section>
+    </div>
+
+    <section class="container featured-items">
+        <section class="container featured-items-text">
+            <h3>Featured Items</h3>
+            <h5>Shop for items based on what we featured in this week</h5>
+        </section>
+
+
+        <section class="items">
+            {% for goods in products %}
+                <article class="item">
+                    <a href="/product/{{ goods.id_product }}">
+                        <div class="wrapper-img">
+                            <img src="{{ goods.image_name }}" alt="Изображение товара">
+                        </div>
+                        <div class="item-content">
+                            <p class="item-name">{{ goods.name|raw }}</p>
+                            <div class="item-icons">
+                                <span class="item-price">{{ goods.price }}$</span>
+                                <div>
+                                <span class="item-like"> <i class="fa fa-thumbs-o-up"
+                                                            aria-hidden="true"></i>{{ goods.liked }}</span>
+                                    <span class="item-viewed"> <i class="fa fa-eye"
+                                                                  aria-hidden="true"></i>{{ goods.viewed }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                    <button class="item-add-basket add_in_basket" data-id_product={{ goods.id_product }}>
+                        <img src="/images/Forma_2.png" alt="basket"> Add to Cart
+                    </button>
+                    {% if user.id_access == 1 %}
+                        <form action="" method="POST" >
+                            <input type="hidden" name="id_product" value="{{ goods.id_product }}">
+                            <button type="submit" name="delete_goods" class="item-add-basket delete-item" value="Удалить товар"><i class="fa fa-trash-o" aria-hidden="true"></i>
+                                Delete
+                            </button>
+                        </form>
+                    {% endif %}
+                </article>
+            {% endfor %}
+        </section>
+
+        <a href="/featured" class="btn-all-product">Browse All Product</a>
+    </section>
+
+{% endblock %}
+
+{% block featured %}
+    <section class="container featured">
+        <section class="featured-banner">
+            <p>30% <span>OFFER</span></p>
+            <p>FOR WOMEN</p>
+        </section>
+        <section class="featured-content">
+            <section class="featured-content-item">
+                <img src="/images/Forma_3.png" alt="car">
+                <div>
+                    <h3>Free Delivery</h3>
+                    <p>Worldwide delivery on all. Authority tive morph next-generation innovation with extensive
+                        models.
+                    </p>
+                </div>
+            </section>
+            <section class="featured-content-item">
+                <img src="/images/Forma_4.png" alt="percent">
+                <div>
+                    <h3>Sales & discounts</h3>
+                    <p>Worldwide delivery on all. Authority tive morph next-generation innovation with extensive
+                        models.
+                    </p>
+                </div>
+            </section>
+            <section class="featured-content-item">
+                <img src="/images/Forma_5.png" alt="crown">
+                <div>
+                    <h3>Quality assurance</h3>
+                    <p>Worldwide delivery on all. Authority tive morph next-generation innovation with extensive
+                        models.
+                    </p>
+                </div>
+            </section>
+        </section>
+    </section>
+{% endblock %}

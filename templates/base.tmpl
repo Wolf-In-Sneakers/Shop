@@ -1,8 +1,22 @@
-{% include "main/header.tmpl" %}
-{% include "main/auth.tmpl" %}
-{% include "main/errors.tmpl" %}
+{% block header %}
+    {% include "main/header.tmpl" %}
+{% endblock %}
+{% block nav %}
+    {% include "main/nav.tmpl" %}
+{% endblock %}
+{% block errors %}
+    {% include "main/errors.tmpl" %}
+{% endblock %}
 
 {% block content %}
 {% endblock %}
 
-{% include "main/footer.tmpl" %}
+{% block featured %}
+    {% include "main/featured.tmpl" %}
+{% endblock %}
+{% block subscribe %}
+    {% include "main/subscribe.tmpl" %}
+{% endblock %}
+{% block footer %}
+    {% include "main/footer.tmpl" %}
+{% endblock %}

@@ -1,0 +1,176 @@
+.input {
+    height: 40px;
+    padding: 10px;
+    display: inline-block;
+    background: #bebdbd;
+    border: none;
+    font-family: sans-serif;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: normal;
+    letter-spacing: 0.4px;
+    text-decoration: none;
+}
+
+.input:hover {
+    background: #d3d2d2;
+}
+
+.input:focus {
+    background: #eeecec;
+}
+
+.select {
+    height: 40px;
+    padding: 10px;
+    display: inline-block;
+    background: #bebdbd;
+    border: none;
+    font-family: sans-serif;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: normal;
+    letter-spacing: 0.4px;
+    text-decoration: none;
+}
+
+.select:hover {
+    background: #d3d2d2;
+}
+
+.select:focus {
+    background: #eeecec;
+}
+
+.btn {
+    height: 40px;
+    padding: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-bottom: 3px solid #dd5f70;
+    background: #f16d7f;
+    color: #ffffff;
+    border-radius: 10px;
+    font-family: sans-serif;
+    font-size: 16px;
+    font-weight: normal;
+    letter-spacing: 0.4px;
+    text-decoration: none;
+}
+
+.btn:hover {
+    background: #dd5f70;
+}
+
+.btn:active {
+    background: #ac4755;
+    border: none;
+}
+
+.delete-btn {
+    height: 25px;
+    display: inline-block;
+    background: #f16d7f;
+    color: #ffffff;
+    border: none;
+    border-bottom: 3px solid #dd5f70;
+    border-radius: 10px;
+    font-family: sans-serif;
+    font-size: 16px;
+    font-weight: normal;
+    letter-spacing: 0.4px;
+    text-decoration: none;
+}
+
+.delete-btn:hover {
+    background: #dd5f70;
+}
+
+.delete-btn:active {
+    background: #ac4755;
+    border: none;
+}
+
+.textarea {
+    height: 130px;
+    padding: 10px;
+    display: inline-block;
+    background: #bebdbd;
+    border: none;
+    font-family: sans-serif;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: normal;
+    letter-spacing: 0.4px;
+    text-decoration: none;
+}
+
+.textarea:hover {
+    background: #d3d2d2;
+}
+
+.textarea:focus {
+    background: #eeecec;
+}
+
+.input_file_wrapper {
+    width: 300px;
+    position: relative;
+    margin: 15px 0;
+    text-align: center;
+}
+
+.input_file {
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+}
+
+.input_file_label_wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.input_file_empty {
+    height: 40px;
+    width: calc(100% - 130px);
+    display: flex;
+    align-items: center;
+    padding: 0 15px;
+    border: 1px solid #c7c7c7;
+    border-radius: 10px 0 0 10px;
+    border-right: none;
+}
+
+.input_file_dtn {
+    width: 130px;
+    height: 40px;
+    background: #f16d7f;
+    color: #ffffff;
+    border: none;
+    border-bottom: 3px solid #dd5f70;
+    font-family: sans-serif;
+    font-size: 16px;
+    font-weight: normal;
+    letter-spacing: 0.4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 10px 10px 0;
+    cursor: pointer;
+    z-index: 1111;
+}
+
+.input_file_dtn:hover {
+    background: #dd5f70;
+}
+
+.input_file_dtn:active {
+    background: #ac4755;
+    border: none;
+}

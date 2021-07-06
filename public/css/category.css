@@ -1,0 +1,33 @@
+.categories {
+    display: flex;
+    flex-flow: row wrap;
+    align-items: flex-start;
+    justify-content: space-around;
+}
+
+.categories > .item {
+    height: 280px;
+    position: relative;
+}
+
+.categories > .item > a {
+    text-transform: uppercase;
+    font-family: sans-serif;
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.categories > .item > a > .item-name {
+    position: absolute;
+    bottom: 0;
+    background: white;
+    transition: 0.1s;
+}
+
+.categories > .item > a:hover > .wrapper-img >img{
+    filter: none;
+}
+
+.categories > .item > a:hover > .item-name {
+    color: #f16d7f;
+}

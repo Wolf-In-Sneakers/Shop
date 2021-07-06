@@ -1,0 +1,116 @@
+.featured {
+    margin-bottom: 100px;
+    display: flex;
+    flex-flow: row nowrap;
+}
+
+.featured-banner {
+    height: 529px;
+    width: 767px;
+    background: url(/images/Layer_39.png), url(/images/Layer_38.png) no-repeat;
+    background-size: cover;
+    position: relative;
+}
+
+.featured-banner p {
+    position: absolute;
+    top: 145px;
+    left: 40px;
+    color: #ffffff;
+    font-family: sans-serif;
+    font-size: 50px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+}
+
+.featured-banner span {
+    color: #f16d7f;
+}
+
+.featured-banner p:last-child {
+    top: 205px;
+    font-size: 32px;
+    letter-spacing: 0.9px;
+}
+
+.featured-content {
+    width: 373px;
+    background: #222224;
+    display: flex;
+    flex-flow: column nowrap;
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.featured-content-item {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    flex-flow: row nowrap;
+}
+
+.featured-content-item div {
+    margin-left: 35px;
+    width: 220px;
+}
+
+.featured-content h3 {
+    font-family: sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    color: #fbfbfb;
+    padding: 5px 0 15px;
+}
+
+.featured-content p {
+    font-family: sans-serif;
+    font-size: 13px;
+    font-weight: 300;
+    line-height: 1.71;
+    letter-spacing: 0.35px;
+    color: #fbfbfb;
+}
+
+.featured-product {
+    width: 100%;
+    background: #222224;
+}
+
+.featured-product-content {
+    height: 340px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-flow: row nowrap;
+    background: #222224;
+
+}
+
+.featured-product-content-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-flow: column nowrap;
+}
+
+.featured-product-content-item h3 {
+    margin: 22px 0 20px;
+    font-family: sans-serif;
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    text-align: center;
+    color: #fbfbfb;
+}
+
+.featured-product-content-item p {
+    margin-bottom: 110px;
+    font-family: sans-serif;
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 0.35px;
+    line-height: 1.71;
+    text-align: center;
+    color: #fbfbfb;
+}

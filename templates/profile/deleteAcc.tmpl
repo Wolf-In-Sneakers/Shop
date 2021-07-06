@@ -1,0 +1,19 @@
+{% extends "base.tmpl" %}
+
+{% block content %}
+    {% if (delete_acc.error is empty) and (delete_acc.success is not empty) %}
+        <section class="error">
+            <h3 class='flex-center'>{{ delete_acc.success }}</h3>
+        </section>
+    {% else %}
+        <h3 class="delete-account-warning container">After deleting your account, it will be impossible to restore it!</h3>
+        <section class="change_product container">
+            <div>
+                <form action="" method="POST" enctype="multipart/form-data">
+                    <input type="password" name="passwd" class="input" placeholder="Password" required>
+                    <input type="submit" name="delete_acc" class="btn" value="Delete account">
+                </form>
+            </div>
+        </section>
+    {% endif %}
+{% endblock %}

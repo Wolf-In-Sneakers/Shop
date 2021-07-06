@@ -1,0 +1,12 @@
+.error {
+    margin: 30px auto 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #1b1b1b;
+    font-family: sans-serif;
+    font-size: 18px;
+    font-weight: bold;
+    letter-spacing: 0.4px;
+    text-decoration: none;
+}
